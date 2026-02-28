@@ -1,0 +1,115 @@
+/* ── Layout ───────────────────────────────────────────────────────────── */
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem 3rem;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────── */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: var(--color-surface);
+  border-bottom: 2px solid var(--color-accent);
+  border-radius: 0 0 10px 10px;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px var(--color-shadow);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.logo-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.app-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.app-title span {
+  color: var(--color-accent);
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.theme-toggle {
+  background: var(--color-surface2);
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.4rem 0.65rem;
+  cursor: pointer;
+  font-size: 1.05rem;
+  line-height: 1;
+  transition: background 0.15s, border-color 0.15s;
+  color: var(--color-text);
+}
+.theme-toggle:hover {
+  border-color: var(--color-accent);
+}
+
+/* ── Main match button ───────────────────────────────────────────────── */
+.match-bar {
+  display: flex;
+  justify-content: center;
+  margin: 1.5rem 0;
+}
+
+.btn-match {
+  background: var(--color-accent);
+  color: var(--color-bg);
+  border: none;
+  border-radius: 10px;
+  padding: 0.75rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 4px 14px var(--color-shadow);
+  transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+.btn-match:hover:not(:disabled) {
+  opacity: 0.9;
+  box-shadow: 0 6px 20px var(--color-shadow);
+}
+.btn-match:active:not(:disabled) { transform: scale(0.97); }
+.btn-match:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ── Dashboard grid ──────────────────────────────────────────────────── */
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .dashboard { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: 12px;
+  border: 1.5px solid var(--color-border);
+  padding: 1.25rem 1.25rem;
+  box-shadow: 0 2px 8px var(--color-shadow);
+}

@@ -25,6 +25,27 @@
   border-radius: 999px;
 }
 
+/* Import / Export icon buttons in section title */
+.title-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.3rem;
+}
+
+.icon-btn {
+  background: var(--color-surface2);
+  border: 1.5px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.18rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  transition: border-color 0.15s, color 0.15s;
+}
+.icon-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
 /* Add row */
 .add-player-row {
   display: flex;
@@ -81,10 +102,23 @@
 .btn:active { transform: scale(0.97); }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.btn-add  { background: var(--color-accent); color: var(--color-bg); }
-.btn-save { background: var(--color-success); color: #fff; }
+.btn-add    { background: var(--color-accent); color: var(--color-bg); }
+.btn-save   { background: var(--color-success); color: #fff; }
 .btn-cancel, .btn-remove { background: var(--color-danger); color: #fff; }
-.btn-edit { background: var(--color-surface2); color: var(--color-text); font-size: 1rem; padding: 0.4rem 0.6rem; }
+.btn-edit   { background: var(--color-surface2); color: var(--color-text); font-size: 1rem; padding: 0.4rem 0.6rem; }
+
+/* Gender toggle button */
+.btn-gender {
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 5px;
+  min-width: 2rem;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.gender-M { background: #3b82f6; color: #fff; }
+.gender-W { background: #ec4899; color: #fff; }
 
 /* Table */
 .player-table {
@@ -113,7 +147,7 @@
 
 .player-index { color: var(--color-text-muted); width: 2rem; }
 .player-name  { font-weight: 500; }
-.actions      { display: flex; gap: 0.4rem; justify-content: flex-end; white-space: nowrap; }
+.actions      { display: flex; gap: 0.4rem; justify-content: flex-end; align-items: center; white-space: nowrap; }
 
 /* Ranking pips */
 .ranking-pips {
@@ -132,10 +166,44 @@
 .pip.filled {
   background: var(--color-accent);
 }
-.ranking-label {
-  font-size: 0.78rem;
+.pip.half {
+  background: linear-gradient(90deg, var(--color-accent) 50%, transparent 50%);
+}
+.ranking-value {
+  font-size: 0.8rem;
+  font-weight: 600;
   color: var(--color-text-muted);
   vertical-align: middle;
+  margin-left: 0.1rem;
+}
+
+/* Sort button in column header */
+.sort-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: inherit;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+.sort-btn:hover { color: var(--color-accent); }
+.sort-btn.active { color: var(--color-accent); }
+.sort-icon { font-size: 0.85em; }
+
+/* Manual mode — assigned & draggable rows */
+.player-table tr.assigned td {
+  opacity: 0.38;
+}
+.player-table tr[draggable='true'] {
+  cursor: grab;
+}
+.player-table tr[draggable='true']:active {
+  cursor: grabbing;
 }
 
 /* Hints & warnings */

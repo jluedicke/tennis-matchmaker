@@ -10,6 +10,23 @@
   gap: 1rem;
 }
 
+/* ── Multiround round sections ───────────────────────────────────────── */
+.round-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.round-header {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  border-bottom: 1.5px solid var(--color-border);
+  padding-bottom: 0.35rem;
+}
+
 .court-card {
   background: var(--color-surface2);
   border-radius: 10px;
@@ -61,6 +78,22 @@
   gap: 0.45rem;
 }
 
+/* Tap-to-swap interaction styles */
+.chip-swappable {
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 0.1rem 0.25rem;
+  margin: -0.1rem -0.25rem;
+  transition: background 0.12s;
+}
+.chip-swappable:hover {
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+}
+.chip-selected {
+  background: color-mix(in srgb, var(--color-accent) 28%, transparent);
+  outline: 1.5px solid var(--color-accent);
+}
+
 .chip-name {
   font-size: 0.92rem;
   font-weight: 500;
@@ -70,20 +103,22 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.4rem;
-  height: 1.4rem;
-  border-radius: 50%;
-  font-size: 0.72rem;
+  min-width: 2rem;
+  height: 1.55rem;
+  border-radius: 999px;
+  padding: 0 0.3rem;
+  font-size: 0.7rem;
   font-weight: 700;
   flex-shrink: 0;
 }
-/* colour-coded by rank */
+/* colour-coded by whole-number tier (1–7) */
 .rank-1 { background: #6b7280; color: #fff; }
 .rank-2 { background: #3b82f6; color: #fff; }
 .rank-3 { background: #10b981; color: #fff; }
 .rank-4 { background: #f59e0b; color: #fff; }
 .rank-5 { background: #ef4444; color: #fff; }
 .rank-6 { background: #8b5cf6; color: #fff; }
+.rank-7 { background: #be185d; color: #fff; }
 
 .team-avg {
   font-size: 0.72rem;
@@ -109,6 +144,28 @@
   border-top: 1px solid var(--color-border);
 }
 
+/* ── Mobile: show teams side-by-side within each court card ─────────── */
+@media (max-width: 760px) {
+  .teams {
+    flex-direction: row;
+    align-items: stretch;
+  }
+  .team {
+    flex: 1;
+    min-width: 0; /* prevent overflow when names are long */
+  }
+  .team-a {
+    border-bottom: none; /* replaced by the vertical vs-divider */
+  }
+  .vs-divider {
+    writing-mode: vertical-rl;
+    padding: 0.75rem 0.15rem;
+    border-left: 1px dashed var(--color-border);
+    border-right: 1px dashed var(--color-border);
+    background: var(--color-surface2);
+  }
+}
+
 .unmatched {
   background: var(--color-warning-bg);
   color: var(--color-warning-text);
@@ -118,6 +175,26 @@
 }
 
 /* Reuse from PlayerList */
+.title-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 0.3rem;
+}
+
+.icon-btn {
+  background: var(--color-surface2);
+  border: 1.5px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.18rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  transition: border-color 0.15s, color 0.15s;
+}
+.icon-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+.icon-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
 .section-title {
   font-size: 1.1rem;
   font-weight: 700;
@@ -145,3 +222,49 @@
   text-align: center;
   padding: 1.5rem 0;
 }
+
+/* ── Manual drag-and-drop slots ──────────────────────────────────────── */
+.drop-slot {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: 6px;
+  padding: 0.3rem 0.45rem;
+  min-height: 2rem;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.slot-empty {
+  border: 1.5px dashed var(--color-border);
+  background: transparent;
+}
+
+.slot-filled {
+  border: 1.5px solid var(--color-accent);
+  background: var(--color-surface);
+}
+
+.drag-over {
+  border-color: var(--color-accent);
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+}
+
+.slot-placeholder {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.slot-clear-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  padding: 0 0.15rem;
+  line-height: 1;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+.slot-clear-btn:hover { color: var(--color-danger); }

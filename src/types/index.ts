@@ -1,7 +1,8 @@
 export interface Player {
   id: string;
   name: string;
-  ranking: number; // 1–6, where 1 = beginner, 6 = pro
+  ranking: number; // USTA rating: 1.5 – 7.0, in 0.5 steps
+  gender: 'M' | 'W';
 }
 
 export interface Team {
@@ -20,3 +21,16 @@ export interface MatchResult {
 }
 
 export type Theme = 'dark' | 'light';
+
+export type MatchAlgorithm = 'ranking' | 'mixed' | 'manual' | 'multiround' | 'multiround-mixed' | 'history' | 'history-mixed';
+
+/** slotKey → playerId  (key format: "${courtId}-${teamNum}-${playerIdx}") */
+export type ManualAssignment = Record<string, string>;
+
+/** Identifies a single player slot within an auto-generated result */
+export interface PlayerPosition {
+  roundIdx:  number;   // 0 for single-round results
+  courtIdx:  number;   // 0-based index into courts array
+  team:      1 | 2;
+  playerIdx: number;   // 0 or 1
+}

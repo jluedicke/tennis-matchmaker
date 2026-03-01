@@ -11,6 +11,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.25rem;
+  /* On notched phones the sticky header must clear the status bar */
+  padding-top: max(1rem, env(safe-area-inset-top));
   background: var(--color-surface);
   border-bottom: 2px solid var(--color-accent);
   border-radius: 0 0 10px 10px;
@@ -64,14 +66,36 @@
   border-color: var(--color-accent);
 }
 
-/* ── Main match button ───────────────────────────────────────────────── */
+/* ── Match bar (algo select + button) ───────────────────────────────── */
+/* Uses the same 2-column grid as .dashboard so edges align with the cards */
 .match-bar {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: center;
   margin: 1.5rem 0;
 }
 
+.algo-select {
+  width: 100%; /* fills left column → right edge aligns with Players card */
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 2px 8px var(--color-shadow);
+  transition: border-color 0.15s;
+}
+.algo-select:focus {
+  border-color: var(--color-accent);
+}
+
 .btn-match {
+  justify-self: center; /* centres the button within the right grid column */
   background: var(--color-accent);
   color: var(--color-bg);
   border: none;
@@ -94,6 +118,63 @@
   cursor: not-allowed;
 }
 
+.btn-clear {
+  background: var(--color-danger);
+}
+
+/* ── Multiround controls (rounds input + match button) ───────────────── */
+.multiround-ctrl {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.rounds-label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* ── Rounds stepper (replaces the number input for mobile-friendliness) ── */
+.rounds-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.stepper-btn {
+  background: var(--color-surface2);
+  border: 1.5px solid var(--color-border);
+  border-radius: 6px;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s;
+  flex-shrink: 0;
+}
+.stepper-btn:hover:not(:disabled) { border-color: var(--color-accent); }
+.stepper-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.stepper-value {
+  min-width: 1.6rem;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
 /* ── Dashboard grid ──────────────────────────────────────────────────── */
 .dashboard {
   display: grid;
@@ -104,6 +185,21 @@
 
 @media (max-width: 760px) {
   .dashboard { grid-template-columns: 1fr; }
+
+  /* Match bar: stack algo picker above the Generate button on phones */
+  .match-bar {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .btn-match {
+    justify-self: stretch; /* full-width tap target on phones */
+  }
+
+  /* Tighten outer padding on small screens */
+  .app {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
 }
 
 .card {

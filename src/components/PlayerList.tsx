@@ -7,6 +7,7 @@ interface Props {
   onChange: (players: Player[]) => void;
   algorithm: MatchAlgorithm;
   assignedPlayerIds: Set<string>;
+  groupSize?: number; // minimum group size for the warning (2 for singles, 4 for doubles)
 }
 
 // USTA rating scale: 1.5 – 7.0 in 0.5 increments
@@ -38,7 +39,7 @@ function exportPlayers(players: Player[]) {
 
 type SortOrder = 'asc' | 'desc' | null;
 
-export default function PlayerList({ players, onChange, algorithm, assignedPlayerIds }: Props) {
+export default function PlayerList({ players, onChange, algorithm, assignedPlayerIds, groupSize = 4 }: Props) {
   const [newName,    setNewName]    = useState('');
   const [newRanking, setNewRanking] = useState(3.5);
   const [newGender,  setNewGender]  = useState<'M' | 'W'>('M');
@@ -293,10 +294,10 @@ export default function PlayerList({ players, onChange, algorithm, assignedPlaye
         </table>
       )}
 
-      {players.length > 0 && players.length % 4 !== 0 && (
+      {players.length > 0 && players.length % groupSize !== 0 && (
         <p className="warning">
-          ⚠ {players.length % 4} player{players.length % 4 !== 1 ? 's' : ''} won't be matched
-          (need a multiple of 4). Add {4 - (players.length % 4)} more or remove some.
+          ⚠ {players.length % groupSize} player{players.length % groupSize !== 1 ? 's' : ''} won't be matched
+          (need a multiple of {groupSize}). Add {groupSize - (players.length % groupSize)} more or remove some.
         </p>
       )}
     </section>

@@ -1,0 +1,28 @@
+/* ── Singles court matchup layout ────────────────────────────────────── */
+.singles-matchup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.singles-vs {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  padding: 0 0.15rem;
+  flex-shrink: 0;
+}
+
+/* Manual mode: slots stretch to fill available width */
+.singles-matchup-manual {
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+.singles-matchup-manual .drop-slot {
+  flex: 1;
+  min-width: 0;
+}

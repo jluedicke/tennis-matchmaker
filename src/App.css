@@ -5,6 +5,32 @@
   padding: 1rem 1.25rem 3rem;
 }
 
+/* ── Header left-side row (back button + logo) ───────────────────────── */
+.app-logo-row {
+  display: flex;
+  align-items: center;
+}
+
+/* ── Back button ─────────────────────────────────────────────────────── */
+.back-btn {
+  background: var(--color-surface2);
+  border: 1.5px solid var(--color-border);
+  border-radius: 8px;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  transition: border-color 0.15s, color 0.15s;
+  white-space: nowrap;
+  margin-right: 0.75rem;
+  flex-shrink: 0;
+}
+.back-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
 /* ── Header ──────────────────────────────────────────────────────────── */
 .app-header {
   display: flex;
@@ -175,6 +201,14 @@
   color: var(--color-text);
 }
 
+/* ── Match bar right column (Match button + help icon) ───────────────── */
+.match-bar-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
 /* ── Dashboard grid ──────────────────────────────────────────────────── */
 .dashboard {
   display: grid;
@@ -193,6 +227,12 @@
   }
   .btn-match {
     justify-self: stretch; /* full-width tap target on phones */
+  }
+  .match-bar-right {
+    width: 100%;
+  }
+  .match-bar-right .btn-match {
+    flex: 1;
   }
 
   /* Tighten outer padding on small screens */

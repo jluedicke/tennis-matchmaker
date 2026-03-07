@@ -20,7 +20,26 @@ export interface MatchResult {
   unmatched: Player[]; // players left over when count is not divisible by 4
 }
 
+export interface SinglesCourt {
+  id: number;
+  player1: Player;
+  player2: Player;
+}
+
+export interface SinglesResult {
+  courts: SinglesCourt[];
+  unmatched: Player[];
+}
+
+export interface SinglesPlayerPosition {
+  roundIdx: number;
+  courtIdx: number;
+  playerNum: 1 | 2;
+}
+
 export type Theme = 'dark' | 'light';
+
+export type AppMode = 'welcome' | 'singles' | 'doubles' | 'team' | 'tournament';
 
 export type MatchAlgorithm = 'ranking' | 'mixed' | 'manual' | 'multiround' | 'multiround-mixed' | 'history' | 'history-mixed';
 

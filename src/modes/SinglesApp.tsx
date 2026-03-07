@@ -7,8 +7,10 @@ import {
   createSinglesMatches,
   createSinglesRounds,
   createSinglesRoundsMixed,
+  createSinglesRoundsSameGender,
   createSinglesHistoryAwareRounds,
   createSinglesHistoryAwareMixedRounds,
+  createSinglesHistoryAwareSameGenderRounds,
 } from '../utils/singlesMatchmaking';
 
 const STORAGE_KEY = 'tennis-matchmaker-players';
@@ -80,10 +82,14 @@ export default function SinglesApp() {
       setRounds(createSinglesRounds(players, numRounds));
     } else if (algorithm === 'multiround-mixed') {
       setRounds(createSinglesRoundsMixed(players, numRounds));
+    } else if (algorithm === 'multiround-same-gender') {
+      setRounds(createSinglesRoundsSameGender(players, numRounds));
     } else if (algorithm === 'history') {
       setRounds(createSinglesHistoryAwareRounds(players, numRounds));
     } else if (algorithm === 'history-mixed') {
       setRounds(createSinglesHistoryAwareMixedRounds(players, numRounds));
+    } else if (algorithm === 'history-same-gender') {
+      setRounds(createSinglesHistoryAwareSameGenderRounds(players, numRounds));
     } else {
       setResult(createSinglesMatches(players, algorithm));
     }
@@ -140,10 +146,13 @@ export default function SinglesApp() {
         >
           <option value="ranking">Match by ranking</option>
           <option value="mixed">Mixed by ranking</option>
+          <option value="same-gender">Same gender by ranking</option>
           <option value="multiround">Multiround match</option>
           <option value="multiround-mixed">Multiround match mixed</option>
+          <option value="multiround-same-gender">Multiround match same gender</option>
           <option value="history">Multiround match history aware</option>
           <option value="history-mixed">Multiround match history aware mixed</option>
+          <option value="history-same-gender">Multiround match history aware same gender</option>
           <option value="manual">Match manually</option>
         </select>
 
@@ -177,7 +186,7 @@ export default function SinglesApp() {
             </button>
             <button className="icon-btn" onClick={() => setShowHelp(true)} title="Quick guide">?</button>
           </div>
-        ) : algorithm === 'multiround' || algorithm === 'multiround-mixed' || algorithm === 'history' || algorithm === 'history-mixed' ? (
+        ) : algorithm === 'multiround' || algorithm === 'multiround-mixed' || algorithm === 'multiround-same-gender' || algorithm === 'history' || algorithm === 'history-mixed' || algorithm === 'history-same-gender' ? (
           <div className="multiround-ctrl">
             <div className="rounds-label">
               Rounds

@@ -219,8 +219,136 @@ export function createSinglesHistoryAwareMixedRounds(players: Player[], numRound
   });
 }
 
+// ── Same-gender singles ──────────────────────────────────────────────────────
+
+/**
+ * Same gender by ranking: maximise the number of courts where both players
+ * share the same gender (M vs M or W vs W).
+ *
+ * Men are sorted by rating and paired consecutively (M[0]vM[1], M[2]vM[3], …),
+ * then women likewise. Any leftover player(s) — at most one from each gender
+ * when their counts are odd — fall back to the standard ranking algorithm.
+ */
+function matchSinglesSameGender(players: Player[], startId = 1): SinglesResult {
+  const sorted = sortByRanking(players);
+  const men   = sorted.filter(p => p.gender === 'M');
+  const women = sorted.filter(p => p.gender === 'W');
+  const courts: SinglesCourt[] = [];
+
+  const numMenCourts   = Math.floor(men.length   / 2);
+  const numWomenCourts = Math.floor(women.length / 2);
+
+  for (let i = 0; i < numMenCourts; i++) {
+    courts.push({ id: startId + courts.length, player1: men[i * 2], player2: men[i * 2 + 1] });
+  }
+  for (let i = 0; i < numWomenCourts; i++) {
+    courts.push({ id: startId + courts.length, player1: women[i * 2], player2: women[i * 2 + 1] });
+  }
+
+  const leftover = [...men.slice(numMenCourts * 2), ...women.slice(numWomenCourts * 2)];
+  if (leftover.length >= 2) {
+    const { courts: extra, unmatched } = matchSinglesByRanking(leftover, startId + courts.length);
+    return { courts: [...courts, ...extra], unmatched };
+  }
+  return { courts, unmatched: leftover };
+}
+
+/**
+ * Multiround same gender — jitter-based same-gender pairing.
+ *
+ * Each round men and women are independently jitter-sorted and paired
+ * consecutively within their gender. Any odd remainder falls back to the
+ * standard ranking algorithm.
+ */
+function matchSinglesWithJitterSameGender(players: Player[]): SinglesResult {
+  const originalMap = new Map(players.map(p => [p.id, p]));
+  const jittered = players.map(jitter);
+  const men   = jittered.filter(p => p.gender === 'M').sort((a, b) => b.ranking - a.ranking);
+  const women = jittered.filter(p => p.gender === 'W').sort((a, b) => b.ranking - a.ranking);
+  const courts: SinglesCourt[] = [];
+
+  const numMenCourts   = Math.floor(men.length   / 2);
+  const numWomenCourts = Math.floor(women.length / 2);
+
+  for (let i = 0; i < numMenCourts; i++) {
+    courts.push({
+      id: courts.length + 1,
+      player1: originalMap.get(men[i * 2].id)!,
+      player2: originalMap.get(men[i * 2 + 1].id)!,
+    });
+  }
+  for (let i = 0; i < numWomenCourts; i++) {
+    courts.push({
+      id: courts.length + 1,
+      player1: originalMap.get(women[i * 2].id)!,
+      player2: originalMap.get(women[i * 2 + 1].id)!,
+    });
+  }
+
+  const leftover = [
+    ...men.slice(numMenCourts * 2).map(p => originalMap.get(p.id)!),
+    ...women.slice(numWomenCourts * 2).map(p => originalMap.get(p.id)!),
+  ];
+  if (leftover.length >= 2) {
+    const { courts: extra, unmatched } = matchSinglesByRanking(leftover, courts.length + 1);
+    return { courts: [...courts, ...extra], unmatched };
+  }
+  return { courts, unmatched: leftover };
+}
+
+export function createSinglesRoundsSameGender(players: Player[], numRounds: number): SinglesResult[] {
+  return Array.from({ length: numRounds }, () => matchSinglesWithJitterSameGender(players));
+}
+
+/**
+ * History-aware same-gender singles — same greedy history approach but only
+ * considers same-gender pairs (M vs M or W vs W) while at least two players
+ * of the same gender remain. Falls back to any pairing when no same-gender
+ * pair is possible.
+ */
+function matchSinglesHistoryAwareSameGender(players: Player[], h: HistoryMap): SinglesResult {
+  const originalMap = new Map(players.map(p => [p.id, p]));
+  const remaining = [...players.map(jitter)].sort((a, b) => b.ranking - a.ranking);
+  const courts: SinglesCourt[] = [];
+  const numCourts = Math.floor(players.length / 2);
+  const OPPONENT_W = 0.5;
+
+  for (let ci = 0; ci < numCourts; ci++) {
+    const n = remaining.length;
+    const canSameGender =
+      remaining.filter(p => p.gender === 'M').length >= 2 ||
+      remaining.filter(p => p.gender === 'W').length >= 2;
+    let bestI = 0, bestJ = 1, bestCost = Infinity;
+    for (let i = 0; i < n - 1; i++) {
+      for (let j = i + 1; j < n; j++) {
+        const pa = remaining[i], pb = remaining[j];
+        if (canSameGender && pa.gender !== pb.gender) continue;
+        const cost = Math.abs(pa.ranking - pb.ranking) + OPPONENT_W * opponentCount(h, pa.id, pb.id);
+        if (cost < bestCost) { bestCost = cost; bestI = i; bestJ = j; }
+      }
+    }
+    const pa = originalMap.get(remaining[bestI].id)!;
+    const pb = originalMap.get(remaining[bestJ].id)!;
+    courts.push({ id: ci + 1, player1: pa, player2: pb });
+    remaining.splice(bestJ, 1);
+    remaining.splice(bestI, 1);
+  }
+  return { courts, unmatched: remaining.map(p => originalMap.get(p.id)!) };
+}
+
+export function createSinglesHistoryAwareSameGenderRounds(players: Player[], numRounds: number): SinglesResult[] {
+  const h: HistoryMap = new Map();
+  return Array.from({ length: numRounds }, () => {
+    const round = matchSinglesHistoryAwareSameGender(players, h);
+    updateHistory(h, round);
+    return round;
+  });
+}
+
 /** Dispatch to the selected single-round algorithm. */
 export function createSinglesMatches(players: Player[], algorithm: MatchAlgorithm = 'ranking'): SinglesResult {
   if (players.length < 2) return { courts: [], unmatched: players };
-  return algorithm === 'mixed' ? matchSinglesMixed(players) : matchSinglesByRanking(players);
+  if (algorithm === 'mixed')       return matchSinglesMixed(players);
+  if (algorithm === 'same-gender') return matchSinglesSameGender(players);
+  return matchSinglesByRanking(players);
 }

@@ -41,7 +41,7 @@ export type Theme = 'dark' | 'light';
 
 export type AppMode = 'welcome' | 'singles' | 'doubles' | 'team' | 'tournament';
 
-export type MatchAlgorithm = 'ranking' | 'mixed' | 'manual' | 'multiround' | 'multiround-mixed' | 'history' | 'history-mixed';
+export type MatchAlgorithm = 'ranking' | 'mixed' | 'same-gender' | 'manual' | 'multiround' | 'multiround-mixed' | 'multiround-same-gender' | 'history' | 'history-mixed' | 'history-same-gender';
 
 /** slotKey → playerId  (key format: "${courtId}-${teamNum}-${playerIdx}") */
 export type ManualAssignment = Record<string, string>;

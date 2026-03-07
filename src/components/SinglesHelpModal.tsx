@@ -28,10 +28,13 @@ export default function SinglesHelpModal({ onClose }: Props) {
           <ul>
             <li><strong>Match by ranking</strong> — sorts players by USTA rating and pairs the closest ratings together: 1st vs 2nd, 3rd vs 4th, and so on.</li>
             <li><strong>Mixed by ranking</strong> — sorts men and women separately by rating and pairs the top-ranked man against the top-ranked woman, and so on. Any gender surplus falls back to the standard ranking algorithm.</li>
+            <li><strong>Same gender by ranking</strong> — maximises same-gender courts (M vs M and W vs W). Men are paired by rating first, then women, with any odd remainder forming a mixed court.</li>
             <li><strong>Multiround match</strong> — generates several rounds. A small random jitter is applied to ratings each round so pairings vary while skill balance is preserved.</li>
             <li><strong>Multiround match mixed</strong> — multiround with jitter, plus the M vs W per-court constraint.</li>
+            <li><strong>Multiround match same gender</strong> — multiround with jitter, maximising same-gender courts each round.</li>
             <li><strong>Multiround history aware</strong> — minimises rematches across rounds by tracking who has already faced whom.</li>
             <li><strong>Multiround history aware mixed</strong> — history-aware pairing with M vs W per court.</li>
+            <li><strong>Multiround history aware same gender</strong> — history-aware pairing that maximises same-gender courts.</li>
             <li><strong>Match manually</strong> — drag players from the list on the left into the court slots on the right. Set the number of rounds with the − / + stepper.</li>
           </ul>
 

@@ -256,6 +256,11 @@
   align-items: start;
 }
 
+@media (max-width: 420px) {
+  /* Tighten header controls so 3 buttons fit on very small phones */
+  .header-controls { gap: 0.4rem; }
+}
+
 @media (max-width: 760px) {
   .dashboard { grid-template-columns: 1fr; }
 

@@ -9,7 +9,7 @@ export default function HelpModal({ onClose }: Props) {
     <div className="help-backdrop" onClick={onClose}>
       <div className="help-modal" onClick={e => e.stopPropagation()}>
         <div className="help-header">
-          <h2 className="help-title">Tennis Match Maker — Quick Guide</h2>
+          <h2 className="help-title">Tennis Match Maker — Doubles Quick Guide</h2>
           <button className="help-close" onClick={onClose} aria-label="Close help">✕</button>
         </div>
 
@@ -19,9 +19,20 @@ export default function HelpModal({ onClose }: Props) {
           <ul>
             <li><strong>Add a player</strong> — enter a name, pick a USTA rating (1.5–7.0), toggle M/W, click <em>+ Add</em>.</li>
             <li><strong>Edit / Remove</strong> — use the ✎ and ✕ buttons on each row. Click <em>Save</em> or press Enter to confirm an edit.</li>
+            <li><strong>Remove all</strong> — click the ✕ button in the table header (above the individual Remove buttons). It lights up red on hover.</li>
             <li><strong>Toggle gender</strong> — click the M/W badge directly in the table without entering edit mode.</li>
             <li><strong>Sort by rating</strong> — click the <em>Ranking</em> column header to cycle ascending / descending / original order.</li>
             <li><strong>Import / Export</strong> — the ↑/↓ buttons in the Players title bar read and write a plain-text file (one player per line: <code>Name,Rating,Gender</code>). Import replaces the current list.</li>
+            <li><strong>Save list (⊞)</strong> — save the current players as a named list for reuse.</li>
+            <li><strong>Load from list (☰)</strong> — browse saved lists; <em>Load all</em> replaces the current players, or expand a list and check individual players to append.</li>
+          </ul>
+
+          <h3>Player Lists</h3>
+          <ul>
+            <li>Use the <strong>☰</strong> button in the top-right header to open the Player Lists panel, where you can view, rename, delete, and edit all saved lists.</li>
+            <li>The <strong>Edit</strong> button on any list opens a full player editor for that list. Changes are not saved until you click <strong>Save</strong> in the overlay footer.</li>
+            <li><strong>Undo / Redo</strong> — the <strong>◀ N/M ▶</strong> navigator in the edit overlay footer lets you step back and forward through your edits.</li>
+            <li>Click <strong>Discard</strong> to close without saving.</li>
           </ul>
 
           <h3>Algorithms</h3>
@@ -40,7 +51,7 @@ export default function HelpModal({ onClose }: Props) {
             <li>Add at least 4 players. Multiples of 4 fill every court slot; any remainder is listed as unmatched.</li>
             <li>Choose an algorithm from the dropdown.</li>
             <li>For multi-round modes, set the number of rounds with the <strong>−</strong> / <strong>+</strong> stepper.</li>
-            <li>Click <strong>⚡ Match</strong> to generate pairings.</li>
+            <li>Click <strong>Match</strong> to generate pairings.</li>
           </ol>
 
           <h3>Match results</h3>
@@ -53,6 +64,7 @@ export default function HelpModal({ onClose }: Props) {
           <h3>Data &amp; settings</h3>
           <ul>
             <li>Your player list and theme preference are saved automatically in the browser and persist across sessions.</li>
+            <li>All saved player lists are available from any mode via the <strong>☰</strong> button in the header.</li>
             <li>Use <strong>Export</strong> (↓) to back up your player list and <strong>Import</strong> (↑) to restore it on another device.</li>
             <li>The <strong>☀️ / 🌙</strong> button in the top-right toggles between light and dark mode.</li>
           </ul>

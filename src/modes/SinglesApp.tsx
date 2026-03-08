@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import PlayerList from '../components/PlayerList';
 import SinglesMatchResults from '../components/SinglesMatchResults';
-import SinglesHelpModal from '../components/SinglesHelpModal';
-import type { Player, SinglesResult, MatchAlgorithm, ManualAssignment, SinglesPlayerPosition } from '../types';
+import type { Player, SinglesResult, MatchAlgorithm, ManualAssignment, SinglesPlayerPosition, ListPanelControl } from '../types';
+
+interface Props { listPanel: ListPanelControl; }
 import {
   createSinglesMatches,
   createSinglesRounds,
@@ -45,14 +46,13 @@ function defaultPlayers(): Player[] {
   ];
 }
 
-export default function SinglesApp() {
+export default function SinglesApp({ listPanel }: Props) {
   const [players, setPlayers]               = useState<Player[]>(loadPlayers);
   const [result, setResult]                 = useState<SinglesResult | null>(null);
   const [rounds, setRounds]                 = useState<SinglesResult[] | null>(null);
   const [numRounds, setNumRounds]           = useState(3);
   const [algorithm, setAlgorithm]           = useState<MatchAlgorithm>('ranking');
   const [manualAssignment, setManualAssignment] = useState<ManualAssignment>({});
-  const [showHelp, setShowHelp]             = useState(false);
 
   // Persist players; clear result/rounds; remove slots for deleted players
   useEffect(() => {
@@ -135,8 +135,6 @@ export default function SinglesApp() {
 
   return (
     <>
-      {showHelp && <SinglesHelpModal onClose={() => setShowHelp(false)} />}
-
       <div className="match-bar">
         <select
           className="algo-select"
@@ -184,7 +182,6 @@ export default function SinglesApp() {
             >
               ✕ Clear
             </button>
-            <button className="icon-btn" onClick={() => setShowHelp(true)} title="Quick guide">?</button>
           </div>
         ) : algorithm === 'multiround' || algorithm === 'multiround-mixed' || algorithm === 'multiround-same-gender' || algorithm === 'history' || algorithm === 'history-mixed' || algorithm === 'history-same-gender' ? (
           <div className="multiround-ctrl">
@@ -212,9 +209,8 @@ export default function SinglesApp() {
               disabled={!canMatch}
               title={canMatch ? 'Generate rounds' : 'Need at least 2 players'}
             >
-              ⚡ Match
+              ▶ Match
             </button>
-            <button className="icon-btn" onClick={() => setShowHelp(true)} title="Quick guide">?</button>
           </div>
         ) : (
           <div className="match-bar-right">
@@ -224,9 +220,8 @@ export default function SinglesApp() {
               disabled={!canMatch}
               title={canMatch ? 'Generate matches' : 'Need at least 2 players'}
             >
-              ⚡ Match
+              ▶ Match
             </button>
-            <button className="icon-btn" onClick={() => setShowHelp(true)} title="Quick guide">?</button>
           </div>
         )}
       </div>
@@ -239,6 +234,11 @@ export default function SinglesApp() {
             algorithm={algorithm}
             assignedPlayerIds={assignedPlayerIds}
             groupSize={2}
+            onAddFromList={() => listPanel.openForSelection(
+              ps => setPlayers(ps.map(p => ({ ...p, id: crypto.randomUUID() }))),
+              ps => setPlayers(prev => [...prev, ...ps.map(p => ({ ...p, id: crypto.randomUUID() }))])
+            )}
+            onSaveList={() => listPanel.openForSave(players)}
           />
         </div>
         <div className="card">

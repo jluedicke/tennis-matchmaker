@@ -1,11 +1,21 @@
 /* ── Singles court matchup layout ────────────────────────────────────── */
 .singles-matchup {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
+  flex-direction: column;
   padding: 0.75rem;
-  flex-wrap: wrap;
+}
+
+/* Each player chip occupies one full-width row, name truncates if long */
+.singles-matchup .player-chip {
+  overflow: hidden;
+}
+
+.singles-matchup .chip-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .singles-vs {
@@ -13,16 +23,12 @@
   font-weight: 700;
   letter-spacing: 0.1em;
   color: var(--color-text-muted);
-  padding: 0 0.15rem;
+  text-align: center;
+  padding: 0.2rem 0;
   flex-shrink: 0;
 }
 
-/* Manual mode: slots stretch to fill available width */
-.singles-matchup-manual {
-  flex-wrap: nowrap;
-  align-items: stretch;
-}
+/* Manual mode: drop slots fill the full row width */
 .singles-matchup-manual .drop-slot {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
 }

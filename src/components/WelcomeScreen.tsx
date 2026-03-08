@@ -23,10 +23,10 @@ export default function WelcomeScreen({ onSelectMode }: Props) {
           <span className="mode-desc">2 vs 2 matches</span>
         </button>
 
-        <button className="mode-btn mode-btn-soon" disabled>
+        <button className="mode-btn" onClick={() => onSelectMode('team')}>
           <span className="mode-icon">🏅</span>
           <span className="mode-label">Team</span>
-          <span className="mode-soon-badge">Coming soon</span>
+          <span className="mode-desc">Team match formats</span>
         </button>
 
         <button className="mode-btn mode-btn-soon" disabled>

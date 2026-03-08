@@ -1,0 +1,103 @@
+/* ── Team courts grid (wider cards than singles/doubles) ─────────────── */
+.team-courts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+/* ── Team court card body ─────────────────────────────────────────────── */
+.team-court-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.team-slot-section {
+  padding: 0.55rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.team-slot-section-a {
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.team-slot-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.1rem;
+}
+
+.team-court-vs {
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  padding: 0.1rem;
+  background: var(--color-surface2);
+  border-top: 1px dashed var(--color-border);
+  border-bottom: 1px dashed var(--color-border);
+}
+
+/* ── Auto-derived court (Davis Cup courts 4 & 5) ─────────────────────── */
+.auto-court-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  border: 1px solid var(--color-accent);
+  border-radius: 999px;
+  padding: 0.1em 0.55em;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+}
+
+.auto-player-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.3rem 0.45rem;
+  min-height: 2rem;
+  border-radius: 6px;
+  border: 1.5px solid var(--color-border);
+  background: color-mix(in srgb, var(--color-surface) 60%, transparent);
+  opacity: 0.85;
+}
+
+.auto-empty {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  font-style: italic;
+  padding: 0.3rem 0.45rem;
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Invalid drop flash ──────────────────────────────────────────────── */
+.slot-invalid {
+  border-color: var(--color-danger) !important;
+  background: color-mix(in srgb, var(--color-danger) 15%, transparent) !important;
+  animation: flash-invalid 0.6s ease-out;
+}
+
+@keyframes flash-invalid {
+  0%   { opacity: 1; }
+  40%  { opacity: 0.45; }
+  100% { opacity: 1; }
+}
+
+/* ── Gender label badge on court header ─────────────────────────────── */
+.gender-badge {
+  font-size: 0.68rem;
+  background: color-mix(in srgb, var(--color-bg) 25%, transparent);
+  border-radius: 999px;
+  padding: 0.1em 0.5em;
+  margin-left: 0.35rem;
+  vertical-align: middle;
+  font-weight: 600;
+}

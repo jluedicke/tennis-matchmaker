@@ -7,7 +7,11 @@ interface Props {
   onChange: (players: Player[]) => void;
   algorithm: MatchAlgorithm;
   assignedPlayerIds: Set<string>;
-  groupSize?: number; // minimum group size for the warning (2 for singles, 4 for doubles)
+  groupSize?: number;        // minimum group size for the warning (2 for singles, 4 for doubles)
+  draggable?: boolean;       // override: if true all players are draggable regardless of algorithm
+  hideGroupWarning?: boolean; // suppress the "N players won't be matched" warning
+  onAddFromList?: () => void; // opens the saved-lists panel in select mode
+  onSaveList?: () => void;    // opens the saved-lists panel in save mode
 }
 
 // USTA rating scale: 1.5 – 7.0 in 0.5 increments
@@ -39,7 +43,7 @@ function exportPlayers(players: Player[]) {
 
 type SortOrder = 'asc' | 'desc' | null;
 
-export default function PlayerList({ players, onChange, algorithm, assignedPlayerIds, groupSize = 4 }: Props) {
+export default function PlayerList({ players, onChange, algorithm, assignedPlayerIds, groupSize = 4, draggable: draggableProp, hideGroupWarning, onAddFromList, onSaveList }: Props) {
   const [newName,    setNewName]    = useState('');
   const [newRanking, setNewRanking] = useState(3.5);
   const [newGender,  setNewGender]  = useState<'M' | 'W'>('M');
@@ -48,6 +52,7 @@ export default function PlayerList({ players, onChange, algorithm, assignedPlaye
   const [editRanking,setEditRanking]= useState(3.5);
   const [editGender, setEditGender] = useState<'M' | 'W'>('M');
   const [sortOrder,  setSortOrder]  = useState<SortOrder>(null);
+  const [showHelp,   setShowHelp]   = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function handleImport(e: React.ChangeEvent<HTMLInputElement>) {
@@ -129,9 +134,35 @@ export default function PlayerList({ players, onChange, algorithm, assignedPlaye
 
   return (
     <section className="player-list-section">
+      {showHelp && (
+        <div className="pl-help-backdrop" onClick={() => setShowHelp(false)}>
+          <div className="pl-help-modal" onClick={e => e.stopPropagation()}>
+            <div className="pl-help-header">
+              <strong>Player Management</strong>
+              <button className="pl-help-close" onClick={() => setShowHelp(false)} aria-label="Close">✕</button>
+            </div>
+            <ul className="pl-help-list">
+              <li><strong>Add</strong> — enter a name, pick a USTA rating, toggle M/W, click <em>+ Add</em> or press Enter.</li>
+              <li><strong>Edit / Remove</strong> — use the ✎ and ✕ buttons on each row. Click <em>× All</em> in the column header to clear the entire list.</li>
+              <li><strong>Toggle gender</strong> — click the M/W badge directly without entering edit mode.</li>
+              <li><strong>Sort</strong> — click the <em>Ranking</em> column header to cycle ↑ / ↓ / original order.</li>
+              <li><strong>Import (⬆) / Export (⬇)</strong> — read or write a plain-text file, one player per line: <em>Name,Rating,Gender</em>. Import replaces the current list.</li>
+              {onSaveList && <li><strong>Save list (⊞)</strong> — save the current players as a named list that can be loaded from any screen.</li>}
+              {onAddFromList && <li><strong>Load from list (☰)</strong> — browse saved lists; <em>Load all</em> replaces the current list, or expand a list and select individual players to append.</li>}
+            </ul>
+          </div>
+        </div>
+      )}
       <h2 className="section-title">
         Players <span className="player-count">{players.length}</span>
         <div className="title-actions">
+          <button className="icon-btn" onClick={() => setShowHelp(true)} title="Player management help">?</button>
+          {onAddFromList && (
+            <button className="icon-btn" onClick={onAddFromList} title="Add players from a saved list">☰</button>
+          )}
+          {onSaveList && (
+            <button className="icon-btn" onClick={onSaveList} title="Save current list" disabled={players.length === 0}>⊞</button>
+          )}
           <button
             className="icon-btn"
             title="Import players from file (replaces current list)"
@@ -201,13 +232,21 @@ export default function PlayerList({ players, onChange, algorithm, assignedPlaye
                 </button>
               </th>
               <th>Gender</th>
-              <th></th>
+              <th>
+                <div className="actions">
+                  <button
+                    className="btn btn-remove-all"
+                    onClick={() => onChange([])}
+                    title="Remove all players"
+                  >✕</button>
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
             {displayedPlayers.map((player, idx) => {
-              const isAssigned  = algorithm === 'manual' && assignedPlayerIds.has(player.id);
-              const isDraggable = algorithm === 'manual' && !isAssigned;
+              const isAssigned  = draggableProp == null && algorithm === 'manual' && assignedPlayerIds.has(player.id);
+              const isDraggable = draggableProp != null ? draggableProp : (algorithm === 'manual' && !isAssigned);
               return (
               <tr
                 key={player.id}
@@ -294,7 +333,7 @@ export default function PlayerList({ players, onChange, algorithm, assignedPlaye
         </table>
       )}
 
-      {players.length > 0 && players.length % groupSize !== 0 && (
+      {!hideGroupWarning && players.length > 0 && players.length % groupSize !== 0 && (
         <p className="warning">
           ⚠ {players.length % groupSize} player{players.length % groupSize !== 1 ? 's' : ''} won't be matched
           (need a multiple of {groupSize}). Add {groupSize - (players.length % groupSize)} more or remove some.

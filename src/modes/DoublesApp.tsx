@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import PlayerList from '../components/PlayerList';
 import MatchResults from '../components/MatchResults';
-import HelpModal from '../components/HelpModal';
-import type { Player, MatchResult, MatchAlgorithm, ManualAssignment, PlayerPosition } from '../types';
+import type { Player, MatchResult, MatchAlgorithm, ManualAssignment, PlayerPosition, ListPanelControl } from '../types';
+
+interface Props { listPanel: ListPanelControl; }
 import { createMatches, createRounds, createRoundsMixed, createHistoryAwareRounds, createHistoryAwareMixedRounds } from '../utils/matchmaking';
 
 const STORAGE_KEY = 'tennis-matchmaker-players';
@@ -37,14 +38,13 @@ function defaultPlayers(): Player[] {
   ];
 }
 
-export default function DoublesApp() {
+export default function DoublesApp({ listPanel }: Props) {
   const [players, setPlayers]               = useState<Player[]>(loadPlayers);
   const [result, setResult]                 = useState<MatchResult | null>(null);
   const [rounds, setRounds]                 = useState<MatchResult[] | null>(null);
   const [numRounds, setNumRounds]           = useState(3);
   const [algorithm, setAlgorithm]           = useState<MatchAlgorithm>('ranking');
   const [manualAssignment, setManualAssignment] = useState<ManualAssignment>({});
-  const [showHelp, setShowHelp]             = useState(false);
 
   // Persist players; clear result/rounds; remove slots for deleted players
   useEffect(() => {
@@ -124,8 +124,6 @@ export default function DoublesApp() {
 
   return (
     <>
-      {showHelp && <HelpModal onClose={() => setShowHelp(false)} />}
-
       <div className="match-bar">
         <select
           className="algo-select"
@@ -170,7 +168,6 @@ export default function DoublesApp() {
             >
               ✕ Clear
             </button>
-            <button className="icon-btn" onClick={() => setShowHelp(true)} title="Quick guide">?</button>
           </div>
         ) : algorithm === 'multiround' || algorithm === 'multiround-mixed' || algorithm === 'history' || algorithm === 'history-mixed' ? (
           <div className="multiround-ctrl">
@@ -198,9 +195,8 @@ export default function DoublesApp() {
               disabled={!canMatch}
               title={canMatch ? 'Generate rounds' : 'Need at least 4 players'}
             >
-              ⚡ Match
+              ▶ Match
             </button>
-            <button className="icon-btn" onClick={() => setShowHelp(true)} title="Quick guide">?</button>
           </div>
         ) : (
           <div className="match-bar-right">
@@ -210,9 +206,8 @@ export default function DoublesApp() {
               disabled={!canMatch}
               title={canMatch ? 'Generate matches' : 'Need at least 4 players'}
             >
-              ⚡ Match
+              ▶ Match
             </button>
-            <button className="icon-btn" onClick={() => setShowHelp(true)} title="Quick guide">?</button>
           </div>
         )}
       </div>
@@ -224,6 +219,11 @@ export default function DoublesApp() {
             onChange={setPlayers}
             algorithm={algorithm}
             assignedPlayerIds={assignedPlayerIds}
+            onAddFromList={() => listPanel.openForSelection(
+              ps => setPlayers(ps.map(p => ({ ...p, id: crypto.randomUUID() }))),
+              ps => setPlayers(prev => [...prev, ...ps.map(p => ({ ...p, id: crypto.randomUUID() }))])
+            )}
+            onSaveList={() => listPanel.openForSave(players)}
           />
         </div>
         <div className="card">

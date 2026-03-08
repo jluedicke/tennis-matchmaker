@@ -258,7 +258,7 @@ export default function SinglesMatchResults({
   }
 
   // ── Multiround + history modes ──
-  if (algorithm === 'multiround' || algorithm === 'multiround-mixed' || algorithm === 'history' || algorithm === 'history-mixed') {
+  if (algorithm === 'multiround' || algorithm === 'multiround-mixed' || algorithm === 'multiround-same-gender' || algorithm === 'history' || algorithm === 'history-mixed' || algorithm === 'history-same-gender') {
     if (!rounds || rounds.length === 0) {
       return (
         <section ref={sectionRef} className="results-section">

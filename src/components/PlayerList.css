@@ -220,3 +220,70 @@
   padding: 0.5rem 0.75rem;
   font-size: 0.88rem;
 }
+
+/* Remove-all button in table header — ghost by default, red on hover */
+.btn-remove-all {
+  background: transparent;
+  color: transparent;
+  border: none;
+}
+.btn-remove-all:hover {
+  background: var(--color-danger);
+  color: #fff;
+  opacity: 1;
+}
+
+/* Player-management inline help overlay */
+.pl-help-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.pl-help-modal {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: 12px;
+  width: min(480px, 100%);
+  max-height: 80dvh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
+.pl-help-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1.5px solid var(--color-border);
+  font-size: 1rem;
+}
+
+.pl-help-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+.pl-help-close:hover {
+  background: var(--color-border);
+  color: var(--color-text);
+}
+
+.pl-help-list {
+  margin: 0;
+  padding: 0.85rem 1.1rem 0.85rem 1.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}

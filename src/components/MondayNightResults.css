@@ -1,0 +1,63 @@
+/* ── MNT court card body — mirrors TeamMatchResults layout ───────────────── */
+.mnt-court-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.mnt-slot-section {
+  padding: 0.55rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.mnt-slot-section-a {
+  border-bottom: 1px dashed var(--color-border);
+}
+
+.mnt-slot-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+  margin-bottom: 0.1rem;
+}
+
+.mnt-court-vs {
+  text-align: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-text-muted);
+  padding: 0.1rem;
+  background: var(--color-surface2);
+  border-top: 1px dashed var(--color-border);
+  border-bottom: 1px dashed var(--color-border);
+}
+
+/* ── Auto-generated player chips (non-manual mode) ────────────────────────── */
+.mnt-player-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.15rem 0.25rem;
+}
+
+/* ── Stacked player rows inside a team section ───────────────────────────── */
+.mnt-slot-section .drop-slot {
+  width: 100%;
+}
+
+/* ── Invalid drop flash (same as TeamMatchResults) ───────────────────────── */
+.slot-invalid {
+  border-color: var(--color-danger) !important;
+  background: color-mix(in srgb, var(--color-danger) 15%, transparent) !important;
+  animation: flash-invalid 0.6s ease-out;
+}
+
+@keyframes flash-invalid {
+  0%   { opacity: 1; }
+  40%  { opacity: 0.45; }
+  100% { opacity: 1; }
+}

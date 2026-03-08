@@ -375,6 +375,48 @@
   font-weight: 700;
 }
 
+/* Editable list name in overlay header */
+.edit-list-name-input {
+  flex: 1;
+  font-size: 1rem;
+  font-weight: 700;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--color-border);
+  color: var(--color-text);
+  padding: 0.1rem 0.2rem;
+  outline: none;
+  min-width: 0;
+}
+.edit-list-name-input:focus {
+  border-bottom-color: var(--color-accent);
+}
+.edit-list-name-input.input-conflict {
+  border-bottom-color: var(--color-danger, #e55);
+}
+
+/* Create new list button */
+.btn-create-list {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  margin-top: 0.5rem;
+  background: transparent;
+  border: 1.5px dashed var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-create-list:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
 .edit-list-body {
   flex: 1;
   overflow-y: auto;

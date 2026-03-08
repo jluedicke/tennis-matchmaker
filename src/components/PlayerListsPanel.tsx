@@ -31,6 +31,7 @@ export default function PlayerListsPanel({ open, mode, savePlayers = [], onLoadA
   const [editAddKeys, setEditAddKeys]     = useState<Set<string>>(new Set());
   const [showEditSave, setShowEditSave]   = useState(false);
   const [editSaveCopyName, setEditSaveCopyName] = useState('');
+  const [editListName, setEditListName]   = useState('');
   const [editHistory, setEditHistory]     = useState<Player[][]>([]);
   const [editHistoryIdx, setEditHistoryIdx] = useState(0);
 
@@ -50,8 +51,10 @@ export default function PlayerListsPanel({ open, mode, savePlayers = [], onLoadA
     setEditAddKeys(new Set());
     setShowEditSave(false);
     setEditSaveCopyName('');
+    const isNew = editingListId === '__new__';
     const list = lists.find(l => l.id === editingListId);
-    setEditHistory(list ? [list.players] : []);
+    setEditListName(isNew ? '' : (list?.name ?? ''));
+    setEditHistory(isNew ? [[]] : (list ? [list.players] : []));
     setEditHistoryIdx(0);
   }, [editingListId]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -179,9 +182,21 @@ export default function PlayerListsPanel({ open, mode, savePlayers = [], onLoadA
 
   function handleEditSave() {
     if (!editingListId) return;
-    const draft = editHistory[editHistoryIdx];
-    if (draft !== undefined) {
-      persistLists(lists.map(l => l.id === editingListId ? { ...l, players: draft } : l));
+    const draft = editHistory[editHistoryIdx] ?? [];
+    if (editingListId === '__new__') {
+      const name = editListName.trim() || 'New List';
+      if (!lists.some(l => l.name === name)) {
+        persistLists([...lists, { id: crypto.randomUUID(), name, players: draft, createdAt: Date.now() }]);
+      }
+    } else {
+      const name = editListName.trim();
+      const nameConflict = name !== '' && lists.some(l => l.id !== editingListId && l.name === name);
+      if (!nameConflict) {
+        persistLists(lists.map(l => l.id === editingListId
+          ? { ...l, name: name || l.name, players: draft }
+          : l
+        ));
+      }
     }
     setEditingListId(null);
   }
@@ -205,7 +220,7 @@ export default function PlayerListsPanel({ open, mode, savePlayers = [], onLoadA
           {mode === 'manage' && (
             <>
               {lists.length === 0 && (
-                <p className="lists-empty">No saved lists yet. Use the save button (⊞) in any player list to create one.</p>
+                <p className="lists-empty">No saved lists yet. Click <em>+ Create new list</em> below or use the save button (⊞) in any player list.</p>
               )}
               {lists.map(list => (
                 <div key={list.id} className="list-item">
@@ -268,6 +283,12 @@ export default function PlayerListsPanel({ open, mode, savePlayers = [], onLoadA
                   )}
                 </div>
               ))}
+              <button
+                className="btn-create-list"
+                onClick={() => setEditingListId('__new__')}
+              >
+                + Create new list
+              </button>
             </>
           )}
 
@@ -384,13 +405,16 @@ export default function PlayerListsPanel({ open, mode, savePlayers = [], onLoadA
 
       {/* ── Edit-list overlay ──────────────────────────────────── */}
       {editingListId && (() => {
+        const isNew = editingListId === '__new__';
         const list = lists.find(l => l.id === editingListId);
-        if (!list) return null;
-        const draft = editHistory[editHistoryIdx] ?? list.players;
-        const otherLists = lists.filter(l => l.id !== editingListId);
+        if (!list && !isNew) return null;
+        const draft = editHistory[editHistoryIdx] ?? (isNew ? [] : list!.players);
+        const otherLists = isNew ? lists : lists.filter(l => l.id !== editingListId);
         const canUndo = editHistoryIdx > 0;
         const canRedo = editHistoryIdx < editHistory.length - 1;
         const hasChanges = editHistoryIdx > 0;
+        const effectiveName = editListName.trim() || (isNew ? 'New List' : (list?.name ?? ''));
+        const nameConflict = lists.some(l => (isNew || l.id !== editingListId) && l.name === effectiveName);
         return (
           <div className="edit-list-backdrop" onClick={() => setEditingListId(null)}>
             <div className="edit-list-modal" onClick={e => e.stopPropagation()}>
@@ -399,7 +423,17 @@ export default function PlayerListsPanel({ open, mode, savePlayers = [], onLoadA
                 {showEditAdd && (
                   <button className="icon-btn" onClick={() => { setShowEditAdd(false); setEditAddKeys(new Set()); }} title="Back">←</button>
                 )}
-                <span className="edit-list-title">{showEditAdd ? 'Add from list' : list.name}</span>
+                {showEditAdd
+                  ? <span className="edit-list-title">Add from list</span>
+                  : <input
+                      className={`edit-list-name-input${nameConflict ? ' input-conflict' : ''}`}
+                      value={editListName}
+                      onChange={e => setEditListName(e.target.value)}
+                      placeholder={isNew ? 'New list name' : list?.name}
+                      maxLength={60}
+                      title={nameConflict ? 'A list with this name already exists' : undefined}
+                    />
+                }
                 <button className="lists-panel-close" onClick={() => setEditingListId(null)} aria-label="Close">✕</button>
               </div>
 
@@ -465,7 +499,7 @@ export default function PlayerListsPanel({ open, mode, savePlayers = [], onLoadA
                 <>
                   <div className="edit-list-body">
                     {showEditSave && (() => {
-                      const copyName = editSaveCopyName.trim() || `Copy of ${list.name}`;
+                      const copyName = editSaveCopyName.trim() || `Copy of ${effectiveName}`;
                       const copyNameTaken = lists.some(l => l.name === copyName);
                       return (
                       <div className="edit-save-row">
@@ -474,7 +508,7 @@ export default function PlayerListsPanel({ open, mode, savePlayers = [], onLoadA
                             className={`save-name-input${copyNameTaken ? ' input-conflict' : ''}`}
                             value={editSaveCopyName}
                             onChange={e => setEditSaveCopyName(e.target.value)}
-                            placeholder={`Copy of ${list.name}`}
+                            placeholder={`Copy of ${effectiveName}`}
                             maxLength={60}
                             onKeyDown={e => { if (e.key === 'Enter' && !copyNameTaken) handleSaveCopy(); if (e.key === 'Escape') setShowEditSave(false); }}
                             autoFocus
@@ -494,7 +528,7 @@ export default function PlayerListsPanel({ open, mode, savePlayers = [], onLoadA
                       hideGroupWarning={true}
                       draggable={false}
                       onAddFromList={() => { setEditAddKeys(new Set()); setShowEditAdd(true); }}
-                      onSaveList={() => { setEditSaveCopyName(`Copy of ${list.name}`); setShowEditSave(true); }}
+                      onSaveList={() => { setEditSaveCopyName(`Copy of ${effectiveName}`); setShowEditSave(true); }}
                     />
                   </div>
                   <div className="edit-list-footer">
@@ -504,7 +538,7 @@ export default function PlayerListsPanel({ open, mode, savePlayers = [], onLoadA
                       <span className={`edit-history-pos${hasChanges ? ' has-changes' : ''}`}>{editHistoryIdx + 1}/{editHistory.length}</span>
                       <button className="icon-btn" onClick={() => setEditHistoryIdx(i => i + 1)} disabled={!canRedo} title="Redo">▶</button>
                     </div>
-                    <button className="btn-save-edit" onClick={handleEditSave}>Save</button>
+                    <button className="btn-save-edit" onClick={handleEditSave} disabled={nameConflict} title={nameConflict ? 'Name already taken' : undefined}>{isNew ? 'Create' : 'Save'}</button>
                   </div>
                 </>
               )}
